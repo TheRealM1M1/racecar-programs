@@ -7,9 +7,9 @@ File Name: template.py << [Modify with your own file name!]
 
 Title: [PLACEHOLDER] << [Modify with your own title]
 
-Author: [PLACEHOLDER] << [Write your name or team name here]
+Author: Team 6 - Ferrari Rochers
 
-Purpose: [PLACEHOLDER] << [Write the purpose of the script here]
+Purpose: Path planner for wall following << [Write the purpose of the script here]
 
 Expected Outcome: [PLACEHOLDER] << [Write what you expect will happen when you run
 the script.]
@@ -45,12 +45,6 @@ angle = 0
 ########################################################################################
 
 # [FUNCTION] The start function is run once every time the start button is pressed
-def calc_angle(angle):
-    if angle < 0:
-        return 360 + angle
-    return angle
-
-    return angle
 def start():
     global speed 
     global angle
@@ -65,42 +59,7 @@ def update():
     global speed 
     global angle 
 
-    scan = rc.lidar.get_samples()
-
-    # right = rc_utils.get_lidar_average_distance(scan, 45)
-    # left = rc_utils.get_lidar_average_distance(scan, 315)
-    # theta_left = math.atan2(right, left)
-    # theta_right = math.atan2(left, right)
-
-    # pv = left-right
-    # angle = -1/50 * pv
-    # angle = rc_utils.clamp(angle, -1, 1)
-
-    # phi = math.radians(45)
-    # a_right = rc_utils.get_lidar_average_distance(scan, 90)
-    # b_right = rc_utils.get_lidar_average_distance(scan, 45)
-    # theta_right = math.atan((a_right * math.cos(phi) - b_right) / (a_right * math.sin(phi)))
-
-    # # Left wall (270°, 315°)
-    # a_left = rc_utils.get_lidar_average_distance(scan, 270)
-    # b_left = rc_utils.get_lidar_average_distance(scan, 315)
-    # theta_left = math.atan((a_left * math.cos(phi) - b_left) / (a_left * math.sin(phi)))
-
-    # # Distances
-    # d_right = a_right
-    # d_left = a_left
-
-    # # Control parameters
-    # K_theta = 1.0
-    # K_center = 0.5
-
-    # # Combined control: parallel + centering
-    # steering = -K_theta * (theta_right - theta_left) - K_center * (d_right - d_left)
-    # steering = rc_utils.clamp(steering, -1.0, 1.0)
-
-    # # Drive
-    # speed = 1
-    # rc.drive.set_speed_angle(speed, steering)
+    scan = rc.lidar.get_samples() # collect Lidar scan 
 
     sweep_range_deg = 120         # Total sweep range (-60° to +60°)
     triangle_span_deg = 30        # Width of each triangle
