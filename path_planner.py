@@ -43,7 +43,11 @@ angle = 0
 ########################################################################################
 # Functions
 ########################################################################################
-
+def calc_angle(angle): # function to turn negative angles into the correct positive values
+    if angle < 0:
+        return 360 + angle
+    return angle
+    
 # [FUNCTION] The start function is run once every time the start button is pressed
 def start():
     global speed 
@@ -67,44 +71,37 @@ def update():
     min_clearance = 150           # Required clearance inside triangle
     angle_step = 2    
 
-    best_direction = 0
-    max_clearance = 0
+    best_direction = 0 # initialize the best direction at the beginning of update. If no best angle is found, then car will go straight.
+    max_clearance = 0 # the max clearance that has been found so far (from the triangles)
 
-    required_clearance = 120
+    required_clearance = 120 # minimum distance that every point in the triangle must be to be considered 
 
-    for center_angle in range(-75, 76, angle_step):
-        start_angle = center_angle - triangle_span_deg // 2
+    for center_angle in range(-75, 76, angle_step): # search angles from 75 degrees to the left all the way to 75 degrees to the right
+        start_angle = center_angle - triangle_span_deg // 2 # create angles 
         end_angle = center_angle + triangle_span_deg // 2
         
 
         # Sample LiDAR points inside triangle
-        inside = []
-        for angle in range(start_angle, end_angle + 1):
-            dist = rc_utils.get_lidar_average_distance(scan, calc_angle(angle))
-            if dist > triangle_depth:
+        inside = [] 
+        for angle in range(start_angle, end_angle + 1): # iterate through each angle value
+            dist = rc_utils.get_lidar_average_distance(scan, calc_angle(angle))  # get the average distances for each angle within the triangle
+            if dist > triangle_depth: # if the distance is greater than the depth, add it to a list
                 inside.append(dist)
 
         # Check clearance
-        if len(inside) == 0 or min(inside) < required_clearance:
+        if len(inside) == 0 or min(inside) < required_clearance: # if even one distance value within the triangle is too small, move on
             continue
         min_dist = min(inside)
         
-        if min_dist > max_clearance:
+        if min_dist > max_clearance: # if the smallest distance in this triangle is greater than the smallest distance in the best triangle so far, then this is the best angle
             best_direction = center_angle
             max_clearance = min_dist
-
-    right = rc_utils.get_lidar_average_distance(scan, 60)    
-    left = rc_utils.get_lidar_average_distance(scan, 300) 
     
     
     
-    steering = best_direction / 70.0
-    # if right < 20:
-    #     steering += -0.2
-    # elif left < 20:
-    #     steering += 0.2
-    speed = 1 if max_clearance > 220 else 0.6
-    steering = rc_utils.clamp(steering, -1.0, 1.0)
+    steering = best_direction / 70.0 # calculate the angle value (-1 to 1) to output to car based on the ideal angle/clearance
+    speed = 1 if max_clearance > 220 else 0.6 # speed controller
+    steering = rc_utils.clamp(steering, -1.0, 1.0) # clamp the angle
 
     print(f"Angle: {best_direction} Clearance: {max_clearance:.2f} Speed: {speed:.2f} Steering: {steering:.2f}")
     rc.drive.set_speed_angle(speed, steering)
